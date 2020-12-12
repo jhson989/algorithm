@@ -1,35 +1,41 @@
+#include <cstdlib>
 #include <cstdio>
 #include <algorithm>
-#include <vector>
+#include <queue>
+#include <functional>
 
-std::vector<int> pq;
-
-void myI(int num) {
-    std::vector<int>::iterator iter;
-
-    for (iter = pq.begin(); iter != pq.end(); iter++) {
-        if (*iter > num) 
-            break;
-    }
-
-    pq.insert((iter), num);
-
-}
+std::priority_queue<int, std::vector<int>, std::less<int>> smaller;
+std::priority_queue<int, std::vector<int>, std::greater<int>> bigger;
+int median;
 
 int main(void) {
 
     int N, t;
     scanf("%d", &N);
+    scanf("%d", &median);
+    printf("%d\n", median);
 
-    for (int i=0; i<N; i++) {
+    for (int i=1; i<N; i++) {
         scanf("%d", &t);
-        myI(t);
 
-        if (i % 2 == 0) {
-            printf("%d\n", pq[i/2]);
-        } else {
-            printf("%d\n", pq[i/2] > pq[i/2+1] ? pq[i/2+1]: pq[i/2]);
+        if (t < median)
+            smaller.push(t);
+        else
+            bigger.push(t);
+
+        if (smaller.size() > bigger.size()) {
+            bigger.push(median);
+            median = smaller.top();
+            smaller.pop();
         }
+
+        if (smaller.size()+1 < bigger.size()) {
+            smaller.push(median);
+            median = bigger.top();
+            bigger.pop();
+        }
+
+        printf("%d\n", median);
     }
 
     return 0;
